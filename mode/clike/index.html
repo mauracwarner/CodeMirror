@@ -191,6 +191,53 @@ public class Class<T, V> implements MyInterface {
 }
 </textarea></div>
 
+<h2>Apex example</h2>
+
+<div><textarea id="apex-code">
+@RestResource(urlMapping = '/accounts')
+global with sharing class AccountsController {
+  private static SoqlService soqlService = new SoqlService();
+
+@HttpGet
+global static void getActiveAccountIds() {
+    RestContext.response.responseBody = Blob.valueOf(soqlService.getAllActiveAccountIds());
+    RestContext.response.statusCode = 200;
+  }
+}
+
+public class SoqlService {
+  public SoqlService() {}
+
+  public List<String> getAllActiveAccountIds() {
+    List<Account> accounts = [ SELECT Id FROM Account WHERE IsDeleted = FALSE];
+    List<String> accountIds = new List<String>();
+    for (Account account : accounts) {
+      accountIds.add(account.Id);
+    }
+    return accountIds;
+  }
+}
+
+@isTest
+public class SoqlServiceTests {
+  private static SoqlService service = new SoqlService();
+
+  @isTest static void testGetAllActiveAccountIds() {
+      test.startTest();
+      Account active = new Account();
+      insert active;
+      Account inactive = new Account();
+      insert inactive;
+      delete inactive;
+
+      List<String> output = service.getAllActiveAccountIds();
+      System.assert(output.contains(active.Id));
+      System.assert(!output.contains(inactive.Id));
+      test.stopTest();
+  }
+}
+</textarea></div>
+
 <h2>Scala example</h2>
 
 <div><textarea id="scala-code">
@@ -339,6 +386,11 @@ shared {Element+} loop&lt;Element&gt;(
           matchBrackets: true,
           mode: "text/x-ceylon"
       });
+      var apexEditor = CodeMirror.fromTextArea(document.getElementById("apex-code"), {
+          lineNumbers: true,
+          matchBrackets: true,
+          mode: "text/x-apex"
+      });
       var mac = CodeMirror.keyMap.default == CodeMirror.keyMap.macDefault;
       CodeMirror.keyMap.default[(mac ? "Cmd" : "Ctrl") + "-Space"] = "autocomplete";
     </script>
@@ -351,7 +403,7 @@ shared {Element+} loop&lt;Element&gt;(
 
     <p><strong>MIME types defined:</strong> <code>text/x-csrc</code>
     (C), <code>text/x-c++src</code> (C++), <code>text/x-java</code>
-    (Java), <code>text/x-csharp</code> (C#),
+    (Java), <code>text/x-apex</code> (Apex), <code>text/x-csharp</code> (C#),
     <code>text/x-objectivec</code> (Objective-C),
     <code>text/x-scala</code> (Scala), <code>text/x-vertex</code>
     <code>x-shader/x-fragment</code> (shader programs),

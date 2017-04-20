@@ -12,6 +12,7 @@
   "use strict";
 
   CodeMirror.modeInfo = [
+    {name: "Apex", mime: "text/x-apex", mode: "clike", ext: ["cls", "apex", "trigger", "tgr"]},
     {name: "APL", mime: "text/apl", mode: "apl", ext: ["dyalog", "apl"]},
     {name: "PGP", mimes: ["application/pgp", "application/pgp-keys", "application/pgp-signature"], mode: "asciiarmor", ext: ["pgp"]},
     {name: "ASN.1", mime: "text/x-ttcn-asn", mode: "asn.1", ext: ["asn", "asn1"]},
